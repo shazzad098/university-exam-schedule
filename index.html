@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Exam Schedule</title>
+    <!-- FIXED: Corrected the import path -->
+    <script type="module" src="./src/main.js"></script>
+</head>
+<body>
+    <div id="app" class="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+            <!-- Header -->
+            <header class="text-center py-8 border-b border-gray-200">
+                <h1 class="text-4xl font-bold text-gray-800 mb-3">University Exam Schedule</h1>
+                <p class="text-lg text-gray-600">Enter your courses to generate your personalized exam timetable</p>
+            </header>
+            
+            <!-- Default Data Loaded Message -->
+            <section class="p-6 bg-green-50 border-b border-green-200">
+                <div id="upload-message" class="message success">
+                    Loading exam schedule...
+                </div>
+            </section>
+            
+            <!-- Course Input Section -->
+            <section class="p-6 bg-gray-50 border-b border-gray-200">
+                <h2 class="text-2xl font-semibold text-blue-600 mb-4">Enter Your Courses</h2>
+                <div class="flex gap-3 mb-4 flex-col sm:flex-row">
+                    <input type="text" id="course-input" placeholder="Enter course code (e.g., CSE261.3)"
+                           class="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <button id="add-course" 
+                            class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium">
+                        Add Course
+                    </button>
+                </div>
+                <div id="course-list" class="flex flex-wrap gap-2 mb-4"></div>
+                <div id="input-message" class="hidden rounded-lg p-3 mb-4"></div>
+                <button id="generate-timetable" class="hidden px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-medium">
+                    Generate Timetable
+                </button>
+            </section>
+            
+            <!-- Timetable Section -->
+            <section class="p-6">
+                <h2 class="text-2xl font-semibold text-blue-600 mb-4">Your Exam Timetable</h2>
+                <div id="timetable-container" class="hidden">
+                    <div class="overflow-x-auto rounded-lg shadow">
+                        <table class="min-w-full bg-white">
+                            <thead class="bg-gray-800 text-white">
+                                <tr>
+                                    <th class="py-3 px-4 text-left">Course Code</th>
+                                    <th class="py-3 px-4 text-left">Exam Date</th>
+                                    <th class="py-3 px-4 text-left">Exam Time</th>
+                                    <th class="py-3 px-4 text-left">Faculty</th>
+                                </tr>
+                            </thead>
+                            <tbody id="timetable-body" class="divide-y divide-gray-200">
+                                <!-- Timetable rows will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center mt-6">
+                        <button id="download-pdf" 
+                                class="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-medium">
+                            Download as PDF
+                        </button>
+                        <button id="reset-all" 
+                                class="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium">
+                            Reset All
+                        </button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Footer -->
+            <footer class="text-center py-6 border-t border-gray-200">
+                <p class="text-gray-600">University Exam Schedule Generator &copy; 2023</p>
+            </footer>
+        </div>
+    </div>
+</body>
+</html>
