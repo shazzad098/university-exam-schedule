@@ -187,6 +187,7 @@ function generateTimetable() {
     const row = document.createElement("tr");
 
     const code = getColumnValue(course, ["Course Code", "CourseCode", "Course", "COURSE CODE", "COURSE", "Subject Code", "Subject"]) || "N/A";
+    const title = getColumnValue(course, ["Course Title", "CourseTitle", "Course Name", "Subject Title"]) || "N/A";
     const date = formatDisplayDate(getColumnValue(course, ["Exam Date", "ExamDate", "Date", "DATE", "Exam_Date"]));
     const startTime = formatExcelTime(getColumnValue(course, ["Starting Time", "StartTime", "Start Time", "Start", "Time", "Exam Time", "ExamTime"])) || "N/A";
     const endTime = formatExcelTime(getColumnValue(course, ["Ending Time", "EndTime", "End Time", "End"])) || "N/A";
@@ -194,6 +195,7 @@ function generateTimetable() {
 
     row.innerHTML = `
         <td class="py-3 px-4 font-medium">${code}</td>
+        <td class="py-3 px-4">${title}</td> 
         <td class="py-3 px-4">${date}</td>
         <td class="py-3 px-4">${startTime} - ${endTime}</td>
         <td class="py-3 px-4">${faculty}</td>
@@ -314,7 +316,7 @@ function formatDisplayDate(dateValue) {
   return `${day}/${month}/${year}`;
 }
 
-// FIXED PDF generation function - resolves OKLCH color parsing error
+// FIXED PDF generation function - only captures table, excludes buttons
 async function downloadPdf() {
   if (timetableContainer.classList.contains("hidden") || timetableBody.children.length === 0) {
     alert("Please generate a timetable first before trying to download the PDF.");
@@ -328,11 +330,12 @@ async function downloadPdf() {
     downloadPdfBtn.textContent = "Generating PDF...";
     downloadPdfBtn.disabled = true;
 
-    // Create a simplified clone with inline styles to avoid CSS parsing issues
-    const clone = timetableContainer.cloneNode(true);
+    // Get only the table wrapper div (excluding buttons)
+    const tableWrapper = timetableContainer.querySelector('.overflow-x-auto');
     
-    // Apply safe inline styles to avoid OKLCH color parsing
-    clone.style.cssText = `
+    // Create a container for PDF with title
+    const pdfContainer = document.createElement('div');
+    pdfContainer.style.cssText = `
       position: absolute;
       left: -9999px;
       top: 0;
@@ -340,10 +343,25 @@ async function downloadPdf() {
       background-color: #ffffff;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       color: #000000;
+      padding: 20px;
     `;
 
-    // Replace all problematic Tailwind classes with safe inline styles
-    const table = clone.querySelector('table');
+    // Add title
+    const title = document.createElement('h1');
+    title.textContent = 'University Exam Schedule';
+    title.style.cssText = `
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #1f2937;
+    `;
+    
+    // Clone only the table part
+    const tableClone = tableWrapper.cloneNode(true);
+    
+    // Apply safe inline styles to the table
+    const table = tableClone.querySelector('table');
     if (table) {
       table.style.cssText = `
         width: 100%;
@@ -355,7 +373,7 @@ async function downloadPdf() {
       `;
     }
 
-    const thead = clone.querySelector('thead');
+    const thead = tableClone.querySelector('thead');
     if (thead) {
       thead.style.cssText = `
         background-color: #1f2937;
@@ -363,7 +381,7 @@ async function downloadPdf() {
       `;
     }
 
-    const thElements = clone.querySelectorAll('th');
+    const thElements = tableClone.querySelectorAll('th');
     thElements.forEach(th => {
       th.style.cssText = `
         padding: 12px 16px;
@@ -375,16 +393,16 @@ async function downloadPdf() {
       `;
     });
 
-    const tbody = clone.querySelector('tbody');
+    const tbody = tableClone.querySelector('tbody');
     if (tbody) {
       tbody.style.cssText = `
         background-color: #ffffff;
       `;
     }
 
-    const tdElements = clone.querySelectorAll('td');
+    const tdElements = tableClone.querySelectorAll('td');
     tdElements.forEach((td, index) => {
-      const row = Math.floor(index / 4);
+      const row = Math.floor(index / 5);
       const isEvenRow = row % 2 === 0;
       
       td.style.cssText = `
@@ -399,25 +417,29 @@ async function downloadPdf() {
       }
     });
 
-    document.body.appendChild(clone);
+    // Assemble the PDF content
+    pdfContainer.appendChild(title);
+    pdfContainer.appendChild(tableClone);
+    
+    document.body.appendChild(pdfContainer);
 
     // Use html2canvas with minimal options to avoid color parsing issues
-    const canvas = await html2canvas(clone, {
+    const canvas = await html2canvas(pdfContainer, {
       backgroundColor: "#ffffff",
       scale: 1.5,
       useCORS: true,
       allowTaint: true,
       logging: false,
       width: 800,
-      height: clone.scrollHeight,
+      height: pdfContainer.scrollHeight,
       ignoreElements: function(element) {
         // Ignore any elements that might cause issues
         return element.tagName === 'SCRIPT' || element.tagName === 'STYLE';
       }
     });
 
-    // Remove the clone
-    document.body.removeChild(clone);
+    // Remove the temporary container
+    document.body.removeChild(pdfContainer);
 
     console.log("Canvas created successfully");
 
