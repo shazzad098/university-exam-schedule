@@ -1,8 +1,10 @@
 {
-  "build": {
-    "env": {
-      "NODE_ENV": "production"
-    },
-    "command": "node_modules/.bin/vite build"
-  }
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build"
+    }
+  ],
+  "buildCommand": "npx vite build"
 }
