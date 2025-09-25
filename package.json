@@ -1,15 +1,14 @@
 {
   "name": "university-exam-schedule",
   "version": "1.0.0",
-  "description": "",
   "type": "module",
   "scripts": {
-    "build": "npx vite build",
-    "dev": "npx vite"
+    "build": "vite build",
+    "dev": "vite"
   },
   "engines": {
     "node": ">=18"
-},
+  },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.13",
     "jspdf": "^2.5.1",
@@ -18,8 +17,5 @@
   },
   "devDependencies": {
     "vite": "^5.0.0"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  }
 }
