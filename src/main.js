@@ -376,176 +376,219 @@ function formatDisplayDate(dateValue) {
   return `${day}/${month}/${year}`;
 }
 
-// FIXED PDF generation function - only captures table, excludes buttons
+// Alternative: Manual PDF generation without autoTable
+// Fixed PDF download function with proper table rendering
 async function downloadPdf() {
   if (
     timetableContainer.classList.contains("hidden") ||
     timetableBody.children.length === 0
   ) {
-    alert(
-      "Please generate a timetable first before trying to download the PDF."
-    );
+    alert("Please generate a timetable first before trying to download the PDF.");
     return;
   }
 
   try {
-    console.log("Starting PDF generation...");
-
-    // Show loading state
+    // Update button to show loading state
     downloadPdfBtn.textContent = "Generating PDF...";
     downloadPdfBtn.disabled = true;
 
-    // Get only the table wrapper div (excluding buttons)
-    const tableWrapper = timetableContainer.querySelector(".overflow-x-auto");
-
-    // Create a container for PDF with title
-    const pdfContainer = document.createElement("div");
-  pdfContainer.style.cssText = `
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 800px;
-  background-color: #ffffff;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  color: #000000;
-  padding: 20px;
-  z-index: 9999;   /* hidden কোরো না */
-`;
-
-    // Add title
-    const title = document.createElement("h1");
-    title.textContent = "University Exam Schedule";
-    title.style.cssText = `
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 20px;
-      color: #1f2937;
-    `;
-
-    // Clone only the table part
-    const tableClone = tableWrapper.cloneNode(true);
-
-    // Apply safe inline styles to the table
-    const table = tableClone.querySelector("table");
-    if (table) {
-      table.style.cssText = `
-        width: 100%;
-        background-color: #ffffff;
-        border-collapse: collapse;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      `;
-    }
-
-    const thead = tableClone.querySelector("thead");
-    if (thead) {
-      thead.style.cssText = `
-        background-color: #1f2937;
-        color: #ffffff;
-      `;
-    }
-
-    const thElements = tableClone.querySelectorAll("th");
-    thElements.forEach((th) => {
-      th.style.cssText = `
-        padding: 12px 16px;
-        text-align: left;
-        font-weight: 600;
-        background-color: #1f2937;
-        color: #ffffff;
-        border: none;
-      `;
-    });
-
-    const tbody = tableClone.querySelector("tbody");
-    if (tbody) {
-      tbody.style.cssText = `
-        background-color: #ffffff;
-      `;
-    }
-
-    const tdElements = tableClone.querySelectorAll("td");
-    tdElements.forEach((td, index) => {
-      const row = Math.floor(index / 5);
-      const isEvenRow = row % 2 === 0;
-
-      td.style.cssText = `
-        padding: 12px 16px;
-        border-bottom: 1px solid #e5e7eb;
-        background-color: ${isEvenRow ? "#ffffff" : "#f9fafb"};
-        color: #374151;
-      `;
-
-      if (td.classList.contains("font-medium")) {
-        td.style.fontWeight = "600";
-      }
-    });
-
-    // Assemble the PDF content
-    pdfContainer.appendChild(title);
-    pdfContainer.appendChild(tableClone);
-
-    document.body.appendChild(pdfContainer);
-
-    // Use html2canvas with minimal options to avoid color parsing issues
-const canvas = await html2canvas(pdfContainer, {
-  backgroundColor: "#ffffff",
-  scale: 2,   // HD আউটপুটের জন্য
-  useCORS: true,
-  allowTaint: true,
-});
-
-    // Remove the temporary container
-    document.body.removeChild(pdfContainer);
-
-    console.log("Canvas created successfully");
-
-    const imgData = canvas.toDataURL("image/png", 0.95);
-
-    // Create PDF
-    const pdf = new jsPDF({
-      orientation: "portrait",
+    const doc = new jsPDF({
+      orientation: "landscape",
       unit: "mm",
       format: "a4",
     });
 
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
+    // Add title with better styling
+    doc.setFontSize(20);
+    doc.setFont("helvetica", "bold");
+    const title = "University Exam Schedule";
+    const titleWidth = doc.getStringUnitWidth(title) * doc.internal.getFontSize() / doc.internal.scaleFactor;
+    const titleX = (doc.internal.pageSize.width - titleWidth) / 2;
+    doc.text(title, titleX, 20);
 
-    const canvasWidth = canvas.width;
-    const canvasHeight = canvas.height;
+    // Add generation date
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    const currentDate = new Date().toLocaleDateString('en-GB');
+    doc.text(`Generated on: ${currentDate}`, 20, 30);
 
-    const aspectRatio = canvasHeight / canvasWidth;
-    const imgWidth = pdfWidth - 20;
-    const imgHeight = imgWidth * aspectRatio;
+    // Table configuration
+    const startY = 40;
+    const rowHeight = 8;
+    const headers = ["Course Code", "Course Title", "Date", "Time", "Faculty"];
+    const colWidths = [40, 70, 30, 50, 70]; // Better proportions
+    let currentY = startY;
 
-    let heightLeft = imgHeight;
-    let position = 10;
+    // Calculate table width and starting X position for centering
+    const tableWidth = colWidths.reduce((sum, width) => sum + width, 0);
+    const startX = (doc.internal.pageSize.width - tableWidth) / 2;
 
-    // Add first page
-    pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight - 20;
+    // Draw table border
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(0.5);
 
-    // Add additional pages if needed
-    while (heightLeft > 0) {
-      position -= pageHeight - 20;
-      pdf.addPage();
-      pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight - 20;
+    // Draw header row
+    let currentX = startX;
+    
+    // Header background
+    doc.setFillColor(52, 73, 94); // Dark blue-gray
+    doc.rect(startX, currentY, tableWidth, rowHeight, "F");
+    
+    // Header borders
+    doc.setDrawColor(255, 255, 255);
+    doc.setLineWidth(0.3);
+    
+    // Draw vertical lines for header
+    currentX = startX;
+    for (let i = 0; i <= headers.length; i++) {
+      doc.line(currentX, currentY, currentX, currentY + rowHeight);
+      if (i < headers.length) {
+        currentX += colWidths[i];
+      }
+    }
+    
+    // Draw horizontal lines for header
+    doc.line(startX, currentY, startX + tableWidth, currentY);
+    doc.line(startX, currentY + rowHeight, startX + tableWidth, currentY + rowHeight);
+
+    // Header text
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    
+    currentX = startX;
+    headers.forEach((header, index) => {
+      const textX = currentX + (colWidths[index] / 2);
+      const textY = currentY + (rowHeight / 2) + 2;
+      doc.text(header, textX, textY, { align: 'center' });
+      currentX += colWidths[index];
+    });
+
+    currentY += rowHeight;
+
+    // Reset styles for body
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(10);
+    doc.setDrawColor(200, 200, 200);
+    doc.setLineWidth(0.2);
+
+    // Draw data rows
+    const maxPageHeight = 200; // Leave space for margins
+
+    for (let i = 0; i < timetableBody.children.length; i++) {
+      const row = timetableBody.children[i];
+      
+      // Check if we need a new page
+      if (currentY > maxPageHeight) {
+        doc.addPage();
+        currentY = 20;
+        
+        // Redraw header on new page
+        currentX = startX;
+        doc.setFillColor(52, 73, 94);
+        doc.rect(startX, currentY, tableWidth, rowHeight, "F");
+        
+        doc.setTextColor(255, 255, 255);
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(11);
+        
+        currentX = startX;
+        headers.forEach((header, index) => {
+          const textX = currentX + (colWidths[index] / 2);
+          const textY = currentY + (rowHeight / 2) + 2;
+          doc.text(header, textX, textY, { align: 'center' });
+          currentX += colWidths[index];
+        });
+        
+        // Draw header borders
+        doc.setDrawColor(255, 255, 255);
+        doc.setLineWidth(0.3);
+        currentX = startX;
+        for (let j = 0; j <= headers.length; j++) {
+          doc.line(currentX, currentY, currentX, currentY + rowHeight);
+          if (j < headers.length) {
+            currentX += colWidths[j];
+          }
+        }
+        doc.line(startX, currentY, startX + tableWidth, currentY);
+        doc.line(startX, currentY + rowHeight, startX + tableWidth, currentY + rowHeight);
+        
+        currentY += rowHeight;
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(0, 0, 0);
+        doc.setFontSize(10);
+        doc.setDrawColor(200, 200, 200);
+        doc.setLineWidth(0.2);
+      }
+      
+      // Alternate row background
+      if (i % 2 === 0) {
+        doc.setFillColor(248, 249, 250); // Very light gray
+        doc.rect(startX, currentY, tableWidth, rowHeight, "F");
+      }
+      
+      // Draw cell borders
+      currentX = startX;
+      for (let j = 0; j <= colWidths.length; j++) {
+        doc.line(currentX, currentY, currentX, currentY + rowHeight);
+        if (j < colWidths.length) {
+          currentX += colWidths[j];
+        }
+      }
+      doc.line(startX, currentY, startX + tableWidth, currentY);
+      doc.line(startX, currentY + rowHeight, startX + tableWidth, currentY + rowHeight);
+      
+      // Add cell data
+      currentX = startX;
+      for (let j = 0; j < row.children.length && j < colWidths.length; j++) {
+        const cellText = row.children[j].textContent.trim();
+        const cellWidth = colWidths[j];
+        
+        // Handle long text by truncating if necessary
+        const maxTextWidth = cellWidth - 4; // Leave padding
+        let displayText = cellText;
+        
+        // Check if text fits, if not truncate
+        const textWidth = doc.getStringUnitWidth(displayText) * doc.internal.getFontSize() / doc.internal.scaleFactor;
+        if (textWidth > maxTextWidth) {
+          // Truncate text and add ellipsis
+          while (doc.getStringUnitWidth(displayText + "...") * doc.internal.getFontSize() / doc.internal.scaleFactor > maxTextWidth && displayText.length > 0) {
+            displayText = displayText.slice(0, -1);
+          }
+          displayText += "...";
+        }
+        
+        const textX = currentX + 2; // Left padding
+        const textY = currentY + (rowHeight / 2) + 2;
+        doc.text(displayText, textX, textY);
+        
+        currentX += cellWidth;
+      }
+      
+      currentY += rowHeight;
     }
 
-    const currentDate = new Date().toISOString().split("T")[0];
-    const filename = `exam-timetable-${currentDate}.pdf`;
+    // Add footer
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(128, 128, 128);
+      doc.text(`Page ${i} of ${pageCount}`, doc.internal.pageSize.width - 30, doc.internal.pageSize.height - 10);
+    }
 
-    pdf.save(filename);
-    console.log("PDF saved successfully");
+    // Generate filename with current date
+    const filename = `exam-timetable-${new Date().toISOString().split("T")[0]}.pdf`;
+    doc.save(filename);
+    
+    // Show success message
+    showMessage(inputMessage, "PDF downloaded successfully!", "success");
+
   } catch (error) {
-    console.error("Detailed PDF generation error:", error);
-    alert(
-      `Error generating PDF: ${error.message}. Please try again or check the browser console for details.`
-    );
+    console.error("PDF generation error:", error);
+    alert("Error generating PDF. Please try again.");
+    showMessage(inputMessage, "Error generating PDF", "error");
   } finally {
     // Reset button state
     downloadPdfBtn.textContent = "Download as PDF";
