@@ -4,13 +4,16 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "dev": "vite"
+    "dev": "vite",
+    "preview": "vite preview"
   },
   "engines": {
     "node": "22.16.0"
   },
   "dependencies": {
+    "@tailwindcss/postcss": "^4.1.13",
     "@tailwindcss/vite": "^4.1.13",
+    "autoprefixer": "^10.4.21",
     "jspdf": "^2.5.1",
     "tailwindcss": "^4.1.13",
     "xlsx": "^0.18.5"
