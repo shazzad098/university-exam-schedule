@@ -402,7 +402,7 @@ async function downloadPdf() {
     const pdfContainer = document.createElement("div");
     pdfContainer.style.cssText = `
   position: fixed;
-  top: 0;
+  top: -9999px;
   left: 0;
   transform: translate(10000px, 0); 
   width: 800px;
