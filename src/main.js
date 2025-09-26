@@ -401,16 +401,16 @@ async function downloadPdf() {
     // Create a container for PDF with title
     const pdfContainer = document.createElement("div");
     pdfContainer.style.cssText = `
-  position: fixed; // 'fixed' ব্যবহার করা হলো
+  position: fixed;
   top: 0;
   left: 0;
-  transform: translate(10000px, 0); // Transform ব্যবহার করে অফ-স্ক্রিন করা হলো
+  transform: translate(10000px, 0); 
   width: 800px;
   background-color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: #000000;
   padding: 20px;
-  z-index: -1; // অন্য কোনো উপাদানের নিচে রাখা হলো
+  z-index: -1; 
 `;
 
     // Add title
@@ -499,6 +499,7 @@ async function downloadPdf() {
       logging: false,
       width: 800,
       height: pdfContainer.scrollHeight,
+      foreignObjectRendering: true,
       ignoreElements: function (element) {
         // Ignore any elements that might cause issues
         return element.tagName === "SCRIPT" || element.tagName === "STYLE";
