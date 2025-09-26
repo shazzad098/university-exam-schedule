@@ -39,7 +39,9 @@ document.addEventListener("DOMContentLoaded", function () {
 async function loadExcelData() {
   try {
     // Fixed the path to include 'public' folder
-    const response = await fetch('/public/Final_Summer_2025_Final_Exam_Routine.xlsx');
+    const response = await fetch(
+      "/public/Final_Summer_2025_Final_Exam_Routine.xlsx"
+    );
 
     if (!response.ok) {
       throw new Error("Excel file not found");
@@ -162,10 +164,19 @@ function generateTimetable() {
   selectedCourses.forEach((courseCode) => {
     const course = examData.find((item) => {
       const itemCourseCode = getColumnValue(item, [
-        "Course Code", "CourseCode", "Course", "COURSE CODE", "COURSE",
-        "course code", "course", "Subject Code", "Subject"
+        "Course Code",
+        "CourseCode",
+        "Course",
+        "COURSE CODE",
+        "COURSE",
+        "course code",
+        "course",
+        "Subject Code",
+        "Subject",
       ]);
-      return itemCourseCode && itemCourseCode.toString().toUpperCase() === courseCode;
+      return (
+        itemCourseCode && itemCourseCode.toString().toUpperCase() === courseCode
+      );
     });
 
     if (course) {
@@ -186,12 +197,56 @@ function generateTimetable() {
   foundCourses.forEach((course) => {
     const row = document.createElement("tr");
 
-    const code = getColumnValue(course, ["Course Code", "CourseCode", "Course", "COURSE CODE", "COURSE", "Subject Code", "Subject"]) || "N/A";
-    const title = getColumnValue(course, ["Course Title", "CourseTitle", "Course Name", "Subject Title"]) || "N/A";
-    const date = formatDisplayDate(getColumnValue(course, ["Exam Date", "ExamDate", "Date", "DATE", "Exam_Date"]));
-    const startTime = formatExcelTime(getColumnValue(course, ["Starting Time", "StartTime", "Start Time", "Start", "Time", "Exam Time", "ExamTime"])) || "N/A";
-    const endTime = formatExcelTime(getColumnValue(course, ["Ending Time", "EndTime", "End Time", "End"])) || "N/A";
-    const faculty = getColumnValue(course, ["Faculty", "FACULTY", "Teacher", "Instructor", "Professor"]) || "N/A";
+    const code =
+      getColumnValue(course, [
+        "Course Code",
+        "CourseCode",
+        "Course",
+        "COURSE CODE",
+        "COURSE",
+        "Subject Code",
+        "Subject",
+      ]) || "N/A";
+    const title =
+      getColumnValue(course, [
+        "Course Title",
+        "CourseTitle",
+        "Course Name",
+        "Subject Title",
+      ]) || "N/A";
+    const date = formatDisplayDate(
+      getColumnValue(course, [
+        "Exam Date",
+        "ExamDate",
+        "Date",
+        "DATE",
+        "Exam_Date",
+      ])
+    );
+    const startTime =
+      formatExcelTime(
+        getColumnValue(course, [
+          "Starting Time",
+          "StartTime",
+          "Start Time",
+          "Start",
+          "Time",
+          "Exam Time",
+          "ExamTime",
+        ])
+      ) || "N/A";
+    const endTime =
+      formatExcelTime(
+        getColumnValue(course, ["Ending Time", "EndTime", "End Time", "End"])
+      ) || "N/A";
+    const faculty =
+      getColumnValue(course, [
+        "Faculty",
+        "FACULTY",
+        "Teacher",
+        "Instructor",
+        "Professor",
+      ]) || "N/A";
 
     row.innerHTML = `
         <td class="py-3 px-4 font-medium">${code}</td>
@@ -230,7 +285,11 @@ function getColumnValue(obj, possibleKeys) {
 function formatExcelTime(timeValue) {
   if (!timeValue || timeValue === "N/A") return "N/A";
 
-  if (typeof timeValue === "string" && (timeValue.toUpperCase().includes("AM") || timeValue.toUpperCase().includes("PM"))) {
+  if (
+    typeof timeValue === "string" &&
+    (timeValue.toUpperCase().includes("AM") ||
+      timeValue.toUpperCase().includes("PM"))
+  ) {
     return timeValue;
   }
 
@@ -241,11 +300,10 @@ function formatExcelTime(timeValue) {
     const totalMinutes = Math.round(timeValue * 24 * 60);
     hours24 = Math.floor(totalMinutes / 60);
     minutes = totalMinutes % 60;
-  }
-  else if (typeof timeValue === 'string' && timeValue.includes(':')) {
-     const parts = timeValue.split(':');
-     hours24 = parseInt(parts[0], 10);
-     minutes = parseInt(parts[1], 10);
+  } else if (typeof timeValue === "string" && timeValue.includes(":")) {
+    const parts = timeValue.split(":");
+    hours24 = parseInt(parts[0], 10);
+    minutes = parseInt(parts[1], 10);
   } else {
     return timeValue.toString();
   }
@@ -268,36 +326,38 @@ function formatExcelTime(timeValue) {
 
 // More robust date parsing function
 function parseDate(dateValue) {
-    if (!dateValue) return new Date(NaN);
+  if (!dateValue) return new Date(NaN);
 
-    if (dateValue instanceof Date) {
-        return dateValue;
+  if (dateValue instanceof Date) {
+    return dateValue;
+  }
+
+  if (typeof dateValue === "number" && dateValue > 0) {
+    const utc_days = Math.floor(dateValue - 25569);
+    const utc_value = utc_days * 86400;
+    const date_info = new Date(utc_value * 1000);
+    return new Date(
+      date_info.getTime() + date_info.getTimezoneOffset() * 60 * 1000
+    );
+  }
+
+  if (typeof dateValue === "string") {
+    const formattedString = dateValue.replace(/[\.-]/g, "/");
+    const parts = formattedString.split("/");
+
+    if (parts.length === 3) {
+      const day = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10);
+      const year = parseInt(parts[2], 10);
+
+      if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+        const fullYear = year < 100 ? 2000 + year : year;
+        return new Date(fullYear, month - 1, day);
+      }
     }
+  }
 
-    if (typeof dateValue === 'number' && dateValue > 0) {
-        const utc_days = Math.floor(dateValue - 25569);
-        const utc_value = utc_days * 86400;
-        const date_info = new Date(utc_value * 1000);
-        return new Date(date_info.getTime() + (date_info.getTimezoneOffset() * 60 * 1000));
-    }
-    
-    if (typeof dateValue === 'string') {
-        const formattedString = dateValue.replace(/[\.-]/g, '/');
-        const parts = formattedString.split('/');
-
-        if (parts.length === 3) {
-            const day = parseInt(parts[0], 10);
-            const month = parseInt(parts[1], 10);
-            const year = parseInt(parts[2], 10);
-
-            if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
-                const fullYear = year < 100 ? 2000 + year : year;
-                return new Date(fullYear, month - 1, day);
-            }
-        }
-    }
-
-    return new Date(NaN);
+  return new Date(NaN);
 }
 
 // Format date for display as DD/MM/YYYY
@@ -318,37 +378,44 @@ function formatDisplayDate(dateValue) {
 
 // FIXED PDF generation function - only captures table, excludes buttons
 async function downloadPdf() {
-  if (timetableContainer.classList.contains("hidden") || timetableBody.children.length === 0) {
-    alert("Please generate a timetable first before trying to download the PDF.");
+  if (
+    timetableContainer.classList.contains("hidden") ||
+    timetableBody.children.length === 0
+  ) {
+    alert(
+      "Please generate a timetable first before trying to download the PDF."
+    );
     return;
   }
 
   try {
     console.log("Starting PDF generation...");
-    
+
     // Show loading state
     downloadPdfBtn.textContent = "Generating PDF...";
     downloadPdfBtn.disabled = true;
 
     // Get only the table wrapper div (excluding buttons)
-    const tableWrapper = timetableContainer.querySelector('.overflow-x-auto');
-    
+    const tableWrapper = timetableContainer.querySelector(".overflow-x-auto");
+
     // Create a container for PDF with title
-    const pdfContainer = document.createElement('div');
+    const pdfContainer = document.createElement("div");
     pdfContainer.style.cssText = `
-      position: absolute;
-      left: -9999px;
-      top: 0;
-      width: 800px;
-      background-color: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      color: #000000;
-      padding: 20px;
-    `;
+  position: fixed; // 'fixed' ব্যবহার করা হলো
+  top: 0;
+  left: 0;
+  transform: translate(10000px, 0); // Transform ব্যবহার করে অফ-স্ক্রিন করা হলো
+  width: 800px;
+  background-color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #000000;
+  padding: 20px;
+  z-index: -1; // অন্য কোনো উপাদানের নিচে রাখা হলো
+`;
 
     // Add title
-    const title = document.createElement('h1');
-    title.textContent = 'University Exam Schedule';
+    const title = document.createElement("h1");
+    title.textContent = "University Exam Schedule";
     title.style.cssText = `
       text-align: center;
       font-size: 24px;
@@ -356,12 +423,12 @@ async function downloadPdf() {
       margin-bottom: 20px;
       color: #1f2937;
     `;
-    
+
     // Clone only the table part
     const tableClone = tableWrapper.cloneNode(true);
-    
+
     // Apply safe inline styles to the table
-    const table = tableClone.querySelector('table');
+    const table = tableClone.querySelector("table");
     if (table) {
       table.style.cssText = `
         width: 100%;
@@ -373,7 +440,7 @@ async function downloadPdf() {
       `;
     }
 
-    const thead = tableClone.querySelector('thead');
+    const thead = tableClone.querySelector("thead");
     if (thead) {
       thead.style.cssText = `
         background-color: #1f2937;
@@ -381,8 +448,8 @@ async function downloadPdf() {
       `;
     }
 
-    const thElements = tableClone.querySelectorAll('th');
-    thElements.forEach(th => {
+    const thElements = tableClone.querySelectorAll("th");
+    thElements.forEach((th) => {
       th.style.cssText = `
         padding: 12px 16px;
         text-align: left;
@@ -393,34 +460,34 @@ async function downloadPdf() {
       `;
     });
 
-    const tbody = tableClone.querySelector('tbody');
+    const tbody = tableClone.querySelector("tbody");
     if (tbody) {
       tbody.style.cssText = `
         background-color: #ffffff;
       `;
     }
 
-    const tdElements = tableClone.querySelectorAll('td');
+    const tdElements = tableClone.querySelectorAll("td");
     tdElements.forEach((td, index) => {
       const row = Math.floor(index / 5);
       const isEvenRow = row % 2 === 0;
-      
+
       td.style.cssText = `
         padding: 12px 16px;
         border-bottom: 1px solid #e5e7eb;
-        background-color: ${isEvenRow ? '#ffffff' : '#f9fafb'};
+        background-color: ${isEvenRow ? "#ffffff" : "#f9fafb"};
         color: #374151;
       `;
-      
-      if (td.classList.contains('font-medium')) {
-        td.style.fontWeight = '600';
+
+      if (td.classList.contains("font-medium")) {
+        td.style.fontWeight = "600";
       }
     });
 
     // Assemble the PDF content
     pdfContainer.appendChild(title);
     pdfContainer.appendChild(tableClone);
-    
+
     document.body.appendChild(pdfContainer);
 
     // Use html2canvas with minimal options to avoid color parsing issues
@@ -432,10 +499,10 @@ async function downloadPdf() {
       logging: false,
       width: 800,
       height: pdfContainer.scrollHeight,
-      ignoreElements: function(element) {
+      ignoreElements: function (element) {
         // Ignore any elements that might cause issues
-        return element.tagName === 'SCRIPT' || element.tagName === 'STYLE';
-      }
+        return element.tagName === "SCRIPT" || element.tagName === "STYLE";
+      },
     });
 
     // Remove the temporary container
@@ -449,15 +516,15 @@ async function downloadPdf() {
     const pdf = new jsPDF({
       orientation: "portrait",
       unit: "mm",
-      format: "a4"
+      format: "a4",
     });
 
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
-    
+
     const canvasWidth = canvas.width;
     const canvasHeight = canvas.height;
-    
+
     const aspectRatio = canvasHeight / canvasWidth;
     const imgWidth = pdfWidth - 20;
     const imgHeight = imgWidth * aspectRatio;
@@ -467,25 +534,26 @@ async function downloadPdf() {
 
     // Add first page
     pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
-    heightLeft -= (pageHeight - 20);
+    heightLeft -= pageHeight - 20;
 
     // Add additional pages if needed
     while (heightLeft > 0) {
-      position -= (pageHeight - 20);
+      position -= pageHeight - 20;
       pdf.addPage();
       pdf.addImage(imgData, "PNG", 10, position, imgWidth, imgHeight);
-      heightLeft -= (pageHeight - 20);
+      heightLeft -= pageHeight - 20;
     }
 
-    const currentDate = new Date().toISOString().split('T')[0];
+    const currentDate = new Date().toISOString().split("T")[0];
     const filename = `exam-timetable-${currentDate}.pdf`;
 
     pdf.save(filename);
     console.log("PDF saved successfully");
-
   } catch (error) {
     console.error("Detailed PDF generation error:", error);
-    alert(`Error generating PDF: ${error.message}. Please try again or check the browser console for details.`);
+    alert(
+      `Error generating PDF: ${error.message}. Please try again or check the browser console for details.`
+    );
   } finally {
     // Reset button state
     downloadPdfBtn.textContent = "Download as PDF";
