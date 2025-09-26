@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
 async function loadExcelData() {
   try {
     // Fixed the path to include 'public' folder
-    const response = await fetch('/public/Final_Summer_2025_Final_Exam_Routine.xlsx');
+    const response = await fetch('/Final_Summer_2025_Final_Exam_Routine.xlsx');
 
     if (!response.ok) {
       throw new Error("Excel file not found");
