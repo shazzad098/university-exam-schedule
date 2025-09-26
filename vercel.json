@@ -10,13 +10,17 @@
     }
   ],
   "routes": [
-    {
-      "src": "/public/(.*)",
-      "dest": "/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ]
+  {
+    "src": "/public/(.*)",
+    "dest": "/$1"
+  },
+  {
+    "src": "/assets/(.*)", 
+    "dest": "/assets/$1" 
+  },
+  {
+    "src": "/(.*)",
+    "dest": "/index.html"
+  }
+]
 }
