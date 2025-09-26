@@ -400,20 +400,16 @@ async function downloadPdf() {
 
     // Create a container for PDF with title
     const pdfContainer = document.createElement("div");
-    pdfContainer.style.cssText = `
-  position: absolute;
+  pdfContainer.style.cssText = `
+  position: fixed;
   top: 0;
   left: 0;
-  // FIX: এই তিনটি লাইন PDF কন্টেন্ট ক্যাপচার নিশ্চিত করবে
-  opacity: 0; 
-  z-index: -1000; 
-  transform: translate3d(20000px, 0, 0); // এলিমেন্টকে ২০০০০ পিক্সেল ডানে সরিয়ে দিন
-
   width: 800px;
   background-color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: #000000;
   padding: 20px;
+  z-index: 9999;   /* hidden কোরো না */
 `;
 
     // Add title
@@ -494,20 +490,12 @@ async function downloadPdf() {
     document.body.appendChild(pdfContainer);
 
     // Use html2canvas with minimal options to avoid color parsing issues
-    const canvas = await html2canvas(pdfContainer, {
-      backgroundColor: "#ffffff",
-      scale: 1.0,
-      useCORS: true,
-      allowTaint: true,
-      logging: false,
-      width: 800,
-      height: pdfContainer.scrollHeight,
-      foreignObjectRendering: true,
-      ignoreElements: function (element) {
-        // Ignore any elements that might cause issues
-        return element.tagName === "SCRIPT" || element.tagName === "STYLE";
-      },
-    });
+const canvas = await html2canvas(pdfContainer, {
+  backgroundColor: "#ffffff",
+  scale: 2,   // HD আউটপুটের জন্য
+  useCORS: true,
+  allowTaint: true,
+});
 
     // Remove the temporary container
     document.body.removeChild(pdfContainer);
