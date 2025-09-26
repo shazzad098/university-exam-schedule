@@ -1,4 +1,4 @@
-import{r as In,u as vn,E as yn}from"./vendor-BCKyzgWk.js";(function(){const A=document.createElement("link").relList;if(A&&A.supports&&A.supports("modulepreload"))return;for(const B of document.querySelectorAll('link[rel="modulepreload"]'))r(B);new MutationObserver(B=>{for(const n of B)if(n.type==="childList")for(const s of n.addedNodes)s.tagName==="LINK"&&s.rel==="modulepreload"&&r(s)}).observe(document,{childList:!0,subtree:!0});function t(B){const n={};return B.integrity&&(n.integrity=B.integrity),B.referrerPolicy&&(n.referrerPolicy=B.referrerPolicy),B.crossOrigin==="use-credentials"?n.credentials="include":B.crossOrigin==="anonymous"?n.credentials="omit":n.credentials="same-origin",n}function r(B){if(B.ep)return;B.ep=!0;const n=t(B);fetch(B.href,n)}})();/*!
+import{r as In,u as vn,E as yn}from"./vendor-DNdXfE3P.js";(function(){const A=document.createElement("link").relList;if(A&&A.supports&&A.supports("modulepreload"))return;for(const B of document.querySelectorAll('link[rel="modulepreload"]'))r(B);new MutationObserver(B=>{for(const n of B)if(n.type==="childList")for(const s of n.addedNodes)s.tagName==="LINK"&&s.rel==="modulepreload"&&r(s)}).observe(document,{childList:!0,subtree:!0});function t(B){const n={};return B.integrity&&(n.integrity=B.integrity),B.referrerPolicy&&(n.referrerPolicy=B.referrerPolicy),B.crossOrigin==="use-credentials"?n.credentials="include":B.crossOrigin==="anonymous"?n.credentials="omit":n.credentials="same-origin",n}function r(B){if(B.ep)return;B.ep=!0;const n=t(B);fetch(B.href,n)}})();/*!
  * html2canvas 1.4.1 <https://html2canvas.hertzen.com>
  * Copyright (c) 2022 Niklas von Hertzen <https://hertzen.com>
  * Released under MIT License
@@ -29,16 +29,19 @@ PERFORMANCE OF THIS SOFTWARE.
         <td class="py-3 px-4">${s} - ${a}</td>
         <td class="py-3 px-4">${i}</td>
     `,ar.appendChild(t)}),e.length>0?(ZA.classList.remove("hidden"),sA(WA,`Found ${e.length} of ${vA.length} courses`,"success")):(ZA.classList.add("hidden"),sA(WA,"No matching courses found","error"))}function wA(e,A){for(const t of A)if(e[t]!==void 0&&e[t]!==null&&e[t]!=="")return e[t];return null}function UB(e){if(!e||e==="N/A")return"N/A";if(typeof e=="string"&&(e.toUpperCase().includes("AM")||e.toUpperCase().includes("PM")))return e;let A=0,t=0;if(typeof e=="number"){const a=Math.round(e*24*60);A=Math.floor(a/60),t=a%60}else if(typeof e=="string"&&e.includes(":")){const a=e.split(":");A=parseInt(a[0],10),t=parseInt(a[1],10)}else return e.toString();if(isNaN(A)||isNaN(t))return e.toString();const r=A>=12?"PM":"AM";let B=A%12;B===0&&(B=12);const n=B.toString().padStart(2,"0"),s=t.toString().padStart(2,"0");return`${n}:${s} ${r}`}function it(e){if(!e)return new Date(NaN);if(e instanceof Date)return e;if(typeof e=="number"&&e>0){const t=Math.floor(e-25569)*86400,r=new Date(t*1e3);return new Date(r.getTime()+r.getTimezoneOffset()*60*1e3)}if(typeof e=="string"){const t=e.replace(/[\.-]/g,"/").split("/");if(t.length===3){const r=parseInt(t[0],10),B=parseInt(t[1],10),n=parseInt(t[2],10);if(!isNaN(r)&&!isNaN(B)&&!isNaN(n)){const s=n<100?2e3+n:n;return new Date(s,B-1,r)}}}return new Date(NaN)}function tQ(e){if(!e||e==="N/A")return"N/A";const A=it(e);if(isNaN(A.getTime()))return e.toString();const t=A.getDate().toString().padStart(2,"0"),r=(A.getMonth()+1).toString().padStart(2,"0"),B=A.getFullYear();return`${t}/${r}/${B}`}async function BQ(){if(ZA.classList.contains("hidden")||ar.children.length===0){alert("Please generate a timetable first before trying to download the PDF.");return}try{console.log("Starting PDF generation..."),ce.textContent="Generating PDF...",ce.disabled=!0;const e=ZA.querySelector(".overflow-x-auto"),A=document.createElement("div");A.style.cssText=`
-  position: fixed;
-  top: -9999px;
+  position: absolute;
+  top: 0;
   left: 0;
-  transform: translate(10000px, 0); 
+  // FIX: এই তিনটি লাইন PDF কন্টেন্ট ক্যাপচার নিশ্চিত করবে
+  opacity: 0; 
+  z-index: -1000; 
+  transform: translate3d(20000px, 0, 0); // এলিমেন্টকে ২০০০০ পিক্সেল ডানে সরিয়ে দিন
+
   width: 800px;
   background-color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: #000000;
   padding: 20px;
-  z-index: -1; 
 `;const t=document.createElement("h1");t.textContent="University Exam Schedule",t.style.cssText=`
       text-align: center;
       font-size: 24px;

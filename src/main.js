@@ -401,16 +401,19 @@ async function downloadPdf() {
     // Create a container for PDF with title
     const pdfContainer = document.createElement("div");
     pdfContainer.style.cssText = `
-  position: fixed;
-  top: -9999px;
+  position: absolute;
+  top: 0;
   left: 0;
-  transform: translate(10000px, 0); 
+  // FIX: এই তিনটি লাইন PDF কন্টেন্ট ক্যাপচার নিশ্চিত করবে
+  opacity: 0; 
+  z-index: -1000; 
+  transform: translate3d(20000px, 0, 0); // এলিমেন্টকে ২০০০০ পিক্সেল ডানে সরিয়ে দিন
+
   width: 800px;
   background-color: #ffffff;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: #000000;
   padding: 20px;
-  z-index: -1; 
 `;
 
     // Add title
