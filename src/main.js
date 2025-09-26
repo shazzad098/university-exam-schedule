@@ -426,7 +426,7 @@ async function downloadPdf() {
     // Use html2canvas with minimal options to avoid color parsing issues
     const canvas = await html2canvas(pdfContainer, {
       backgroundColor: "#ffffff",
-      scale: 1.5,
+      scale: 1.0,
       useCORS: true,
       allowTaint: true,
       logging: false,
