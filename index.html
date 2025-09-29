@@ -1,180 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SEU Final Exam 2025 Timetable Generator</title>
-    <script type="module" src="./src/main.js"></script>
-  </head>
-  <body>
-    <div id="app" class="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div
-        class="max-w-6xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden transform transition duration-500 hover:shadow-3xl"
-      >
-        <header class="text-center py-10 bg-indigo-700 text-white">
-          <h1 class="text-5xl font-extrabold tracking-tight mb-3">
-            <span class="block">SEU Final Exam 2025 Schedule 🗓️</span>
-          </h1>
-          <p class="text-xl opacity-90 font-light">
-            Your Personalized Timetable Generator for SEU Students
-          </p>
-        </header>
 
-        <section class="p-6 bg-green-50 border-b-4 border-green-400">
-          <div
-            id="upload-message"
-            class="flex items-center space-x-2 text-green-700 font-medium"
-          >
-            <svg
-              class="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-              ></path>
-            </svg>
-            <span>Initial exam schedule data loaded successfully.</span>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SEU Final Exam 2025 Timetable Generator</title>
+  <script type="module" src="./src/main.js"></script>
+</head>
+
+<body>
+  <div id="app" class="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div
+      class="max-w-6xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden transform transition duration-500 hover:shadow-3xl">
+      <header class="text-center py-10 bg-indigo-700 text-white">
+        <h1 class="text-5xl font-extrabold tracking-tight mb-3">
+          <span class="block">SEU Final Exam 2025 Schedule 🗓️</span>
+        </h1>
+        <p class="text-xl opacity-90 font-light">
+          Your Personalized Timetable Generator for SEU Students
+        </p>
+      </header>
+
+      <section class="p-6 bg-green-50 border-b-4 border-green-400">
+        <div id="upload-message" class="flex items-center space-x-2 text-green-700 font-medium">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+          </svg>
+          <span>Initial exam schedule data loaded successfully.</span>
+        </div>
+      </section>
+
+      <section class="p-8 bg-white border-b border-gray-200">
+        <h2 class="text-3xl font-bold text-indigo-700 mb-6 border-b pb-2">
+          Add Your Registered Courses ✍️
+        </h2>
+        <div class="flex gap-4 mb-4 flex-col sm:flex-row items-stretch">
+          <input type="text" id="course-input" placeholder="Enter course code (e.g., CSE261.3, MAT101)"
+            class="flex-1 p-4 border-2 border-indigo-300 rounded-xl shadow-inner focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition-all text-lg" />
+          <button id="add-course"
+            class="px-8 py-4 bg-indigo-600 text-white rounded-xl shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-transform transform hover:scale-[1.02] font-semibold text-lg">
+            Add Course
+          </button>
+        </div>
+        <div id="course-list"
+          class="flex flex-wrap gap-3 mb-6 p-2 min-h-[40px] border-dashed border-2 border-gray-200 rounded-lg"></div>
+        <div id="input-message" class="hidden rounded-xl p-4 mb-6 text-sm"></div>
+
+        <button id="generate-timetable"
+          class="hidden w-full px-6 py-4 bg-teal-500 text-white rounded-xl shadow-lg hover:bg-teal-600 focus:outline-none focus:ring-4 focus:ring-teal-300 transition-transform transform hover:-translate-y-0.5 font-bold text-lg">
+          Generate My Personalized Timetable!
+        </button>
+      </section>
+
+      <section class="p-8 bg-gray-50">
+        <h2 class="text-3xl font-bold text-indigo-700 mb-6 border-b pb-2">
+          Your Final Exam Timetable Preview
+        </h2>
+        <div id="timetable-container" class="hidden">
+          <div class="overflow-x-auto rounded-xl shadow-xl border border-gray-200">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-indigo-600 text-white shadow-md">
+                <tr>
+                  <th class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wider">
+                    Course Code
+                  </th>
+                  <th class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wider">
+                    Course Title
+                  </th>
+                  <th class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wider">
+                    Exam Date
+                  </th>
+                  <th class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wider">
+                    Exam Time
+                  </th>
+                  <th class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wider">
+                    Faculty
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="timetable-body" class="bg-white divide-y divide-gray-100"></tbody>
+            </table>
           </div>
-        </section>
 
-        <section class="p-8 bg-white border-b border-gray-200">
-          <h2 class="text-3xl font-bold text-indigo-700 mb-6 border-b pb-2">
-            Add Your Registered Courses ✍️
-          </h2>
-          <div class="flex gap-4 mb-4 flex-col sm:flex-row items-stretch">
-            <input
-              type="text"
-              id="course-input"
-              placeholder="Enter course code (e.g., CSE261.3, MAT101)"
-              class="flex-1 p-4 border-2 border-indigo-300 rounded-xl shadow-inner focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition-all text-lg"
-            />
-            <button
-              id="add-course"
-              class="px-8 py-4 bg-indigo-600 text-white rounded-xl shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-transform transform hover:scale-[1.02] font-semibold text-lg"
-            >
-              Add Course
+          <div class="flex flex-col sm:flex-row gap-5 justify-center mt-8">
+            <button id="download-pdf"
+              class="flex items-center justify-center space-x-2 px-8 py-4 bg-green-600 text-white rounded-xl shadow-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 transition-transform transform hover:scale-[1.02] font-semibold">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                </path>
+              </svg>
+              <span>Download as PDF</span>
+            </button>
+            <button id="reset-all"
+              class="flex items-center justify-center space-x-2 px-8 py-4 bg-red-600 text-white rounded-xl shadow-lg hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 transition-transform transform hover:scale-[1.02] font-semibold">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span>Reset All</span>
             </button>
           </div>
-          <div
-            id="course-list"
-            class="flex flex-wrap gap-3 mb-6 p-2 min-h-[40px] border-dashed border-2 border-gray-200 rounded-lg"
-          ></div>
-          <div
-            id="input-message"
-            class="hidden rounded-xl p-4 mb-6 text-sm"
-          ></div>
+        </div>
+      </section>
 
-          <button
-            id="generate-timetable"
-            class="hidden w-full px-6 py-4 bg-teal-500 text-white rounded-xl shadow-lg hover:bg-teal-600 focus:outline-none focus:ring-4 focus:ring-teal-300 transition-transform transform hover:-translate-y-0.5 font-bold text-lg"
-          >
-            Generate My Personalized Timetable!
-          </button>
-        </section>
+      <footer class="text-center py-5 border-t border-gray-200 bg-gray-100">
+        <p class="text-gray-500 text-sm">
+          SEU Final Exam Schedule Generator &copy; 2025 | Developed by
 
-        <section class="p-8 bg-gray-50">
-          <h2 class="text-3xl font-bold text-indigo-700 mb-6 border-b pb-2">
-            Your Final Exam Timetable Preview
-          </h2>
-          <div id="timetable-container" class="hidden">
-            <div
-              class="overflow-x-auto rounded-xl shadow-xl border border-gray-200"
-            >
-              <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-indigo-600 text-white shadow-md">
-                  <tr>
-                    <th
-                      class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wider"
-                    >
-                      Course Code
-                    </th>
-                    <th
-                      class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wider"
-                    >
-                      Course Title
-                    </th>
-                    <th
-                      class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wider"
-                    >
-                      Exam Date
-                    </th>
-                    <th
-                      class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wider"
-                    >
-                      Exam Time
-                    </th>
-                    <th
-                      class="py-4 px-6 text-left text-sm font-bold uppercase tracking-wider"
-                    >
-                      Faculty
-                    </th>
-                  </tr>
-                </thead>
-                <tbody
-                  id="timetable-body"
-                  class="bg-white divide-y divide-gray-100"
-                ></tbody>
-              </table>
-            </div>
+          <a href="https://www.facebook.com/shazzad.hasan.22103361" target="_blank" rel="noopener noreferrer"
+            class="text-blue-600 hover:text-blue-800 font-medium">
+            Shazzad Haque Prince
+          </a>
 
-            <div class="flex flex-col sm:flex-row gap-5 justify-center mt-8">
-              <button
-                id="download-pdf"
-                class="flex items-center justify-center space-x-2 px-8 py-4 bg-green-600 text-white rounded-xl shadow-lg hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 transition-transform transform hover:scale-[1.02] font-semibold"
-              >
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  ></path>
-                </svg>
-                <span>Download as PDF</span>
-              </button>
-              <button
-                id="reset-all"
-                class="flex items-center justify-center space-x-2 px-8 py-4 bg-red-600 text-white rounded-xl shadow-lg hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-300 transition-transform transform hover:scale-[1.02] font-semibold"
-              >
-                <svg
-                  class="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  ></path>
-                </svg>
-                <span>Reset All</span>
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <footer class="text-center py-5 border-t border-gray-200 bg-gray-100">
-          <p class="text-gray-500 text-sm">
-            SEU Final Exam Schedule Generator &copy; 2025 | Developed by Shazzad
-            Haque Prince
-          </p>
-        </footer>
-      </div>
+        </p>
+      </footer>
     </div>
-  </body>
+  </div>
+</body>
+
 </html>
