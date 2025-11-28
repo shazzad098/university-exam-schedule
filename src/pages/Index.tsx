@@ -35,8 +35,10 @@ const Index = () => {
     }
   };
 
-  const handleSearch = () => {
-    if (!searchTerm.trim()) {
+const handleSearch = () => {
+    const trimmedSearchTerm = searchTerm.trim();
+    
+    if (!trimmedSearchTerm) {
       toast({
         title: "Please enter a course code",
         description: "Enter a course code to search for exam schedules.",
@@ -45,7 +47,24 @@ const Index = () => {
       return;
     }
 
-    const searchResults = searchByCourseCode(allSchedules, searchTerm);
+    if (isLoading) {
+      toast({
+        title: "Loading data",
+        description: "Please wait while we load the exam schedules.",
+      });
+      return;
+    }
+
+    const searchResults = searchByCourseCode(allSchedules, trimmedSearchTerm);
+
+    if (searchResults.length === 0) {
+      toast({
+        title: "No results found",
+        description: `No exam schedules found for "${trimmedSearchTerm}".`,
+        variant: "destructive",
+      });
+      return;
+    }
 
     // Check if course already exists in results
     const existingCodes = results.map(r => r.courseCode.toLowerCase());
@@ -53,19 +72,12 @@ const Index = () => {
       r => !existingCodes.includes(r.courseCode.toLowerCase())
     );
 
-    if (newResults.length === 0 && searchResults.length > 0) {
+    if (newResults.length === 0) {
       toast({
         title: "Already added",
-        description: `"${searchTerm}" is already in your results.`,
+        description: `"${trimmedSearchTerm}" is already in your results.`,
       });
-      return;
-    }
-
-    if (searchResults.length === 0) {
-      toast({
-        title: "No results found",
-        description: `No exam schedules found for "${searchTerm}".`,
-      });
+      setSearchTerm(""); // Clear search even if already added
       return;
     }
 
@@ -74,8 +86,8 @@ const Index = () => {
     setSearchTerm(""); // Clear search after adding
 
     toast({
-      title: "Course added",
-      description: `Added ${newResults.length} exam schedule(s).`,
+      title: "Course added ✓",
+      description: `Added ${newResults.length} exam schedule(s) for ${trimmedSearchTerm}.`,
     });
   };
 
@@ -187,7 +199,7 @@ const Index = () => {
         {/* Search Section */}
         <div className="mb-16 animate-slide-up">
           <div className="relative max-w-3xl mx-auto">
-            <div className="absolute inset-0 bg-gradient-primary blur-3xl opacity-20 animate-pulse" />
+            <div className="absolute inset-0 bg-gradient-primary blur-3xl opacity-20 animate-pulse pointer-events-none" />
             <SearchBar
               value={searchTerm}
               onChange={setSearchTerm}

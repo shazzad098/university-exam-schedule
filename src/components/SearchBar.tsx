@@ -19,7 +19,8 @@ export function SearchBar({ value, onChange, onSearch }: SearchBarProps) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col sm:flex-row gap-4 w-full"
+      // Added relative and z-10 to ensure the form is above background elements and clickable
+      className="flex flex-col sm:flex-row gap-4 w-full relative z-10"
     >
       <div className="relative flex-1">
         <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground z-10" />
