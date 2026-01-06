@@ -107,8 +107,9 @@ function convertTo12Hour(time: string): string {
 
 export function searchByCourseCode(schedules: ExamSchedule[], courseCode: string): ExamSchedule[] {
   const searchTerm = courseCode.trim().toLowerCase();
+  
   const results = schedules.filter(schedule => 
-    schedule.courseCode.toLowerCase().includes(searchTerm)
+    schedule.courseCode.toLowerCase() === searchTerm 
   );
   
   // Sort by date

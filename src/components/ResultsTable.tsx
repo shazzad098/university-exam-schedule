@@ -7,7 +7,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
-import { Calendar, Clock, User, BookOpen } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Calendar, Clock, User, BookOpen, Trash2 } from "lucide-react";
 
 interface ExamSchedule {
   courseCode: string;
@@ -21,37 +22,26 @@ interface ExamSchedule {
 
 interface ResultsTableProps {
   results: ExamSchedule[];
+  onDelete: (courseCode: string) => void; // রিমুভ করার ফাংশন প্রপস হিসেবে নেওয়া হয়েছে
 }
 
-export function ResultsTable({ results }: ResultsTableProps) {
+export function ResultsTable({ results, onDelete }: ResultsTableProps) {
   if (results.length === 0) return null;
 
-  // --- START: Fixed Sorting Logic Added Here ---
-  // Helper function to convert DD.MM.YYYY string to YYYY-MM-DD string for reliable Date parsing
-  const parseDateStringForSorting = (dateStr: string) => {
-    // Assuming dateStr is in DD.MM.YYYY format (e.g., "11.10.2025")
-    const parts = dateStr.split('.');
-    if (parts.length === 3) {
-      // Reformat to YYYY-MM-DD: parts[2] (Year), parts[1] (Month), parts[0] (Day)
-      return `${parts[2]}-${parts[1]}-${parts[0]}`;
-    }
-    // Fallback for unexpected formats, though YYYY-MM-DD is preferred
-    return dateStr;
-  };
-
-  // Create a sorted copy of the results array
+  // তারিখ অনুযায়ী ছোট থেকে বড় ক্রমে সাজানোর লজিক
   const sortedResults = [...results].sort((a, b) => {
-    // Convert to ISO-like format (YYYY-MM-DD) before creating Date objects for accurate sorting
-    const formattedDateA = parseDateStringForSorting(a.date);
-    const formattedDateB = parseDateStringForSorting(b.date);
+    const parseDateStringForSorting = (dateStr: string) => {
+      const parts = dateStr.split('.');
+      if (parts.length === 3) {
+        return `${parts[2]}-${parts[1]}-${parts[0]}`; // YYYY-MM-DD ফরম্যাট
+      }
+      return dateStr;
+    };
 
-    const dateA = new Date(formattedDateA);
-    const dateB = new Date(formattedDateB);
-
-    // Sort in ascending order (earliest date first)
+    const dateA = new Date(parseDateStringForSorting(a.date));
+    const dateB = new Date(parseDateStringForSorting(b.date));
     return dateA.getTime() - dateB.getTime();
   });
-  // --- END: Fixed Sorting Logic ---
 
   return (
     <Card className="overflow-hidden bg-card/60 backdrop-blur-md border border-border/50 shadow-soft hover:shadow-glow transition-all duration-300 animate-slide-up">
@@ -69,7 +59,7 @@ export function ResultsTable({ results }: ResultsTableProps) {
               <TableHead className="font-bold text-primary">
                 <div className="flex items-center gap-2">
                   <Calendar className="h-5 w-5" />
-                  Exam Date
+                  Date
                 </div>
               </TableHead>
               <TableHead className="font-bold text-primary">Day</TableHead>
@@ -85,48 +75,48 @@ export function ResultsTable({ results }: ResultsTableProps) {
                   Faculty
                 </div>
               </TableHead>
+              {/* Action কলাম যোগ করা হয়েছে */}
+              <TableHead className="font-bold text-primary text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {/* Use sortedResults for mapping */}
             {sortedResults.map((schedule, index) => (
               <TableRow 
                 key={index} 
                 className="hover:bg-gradient-to-r hover:from-primary/5 hover:to-accent/5 transition-all duration-200 border-b border-border/30"
               >
                 <TableCell className="font-bold text-accent">
-                  <div className="flex items-center gap-2 py-2">
-                    <span className="px-3 py-1 bg-accent/10 text-accent rounded-lg border border-accent/20 font-mono text-sm">
-                      {schedule.courseCode}
-                    </span>
-                  </div>
+                  <span className="px-3 py-1 bg-accent/10 text-accent rounded-lg border border-accent/20 font-mono text-sm">
+                    {schedule.courseCode}
+                  </span>
                 </TableCell>
-                <TableCell className="max-w-xs font-medium">
-                  {schedule.courseTitle}
-                </TableCell>
+                <TableCell className="max-w-xs font-medium">{schedule.courseTitle}</TableCell>
+                <TableCell className="font-medium">{schedule.date}</TableCell>
                 <TableCell>
-                  <div className="flex items-center gap-2 font-medium">
-                    {schedule.date}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <span className="px-3 py-1.5 bg-gradient-primary text-primary-foreground rounded-lg text-sm font-semibold shadow-sm">
+                  <span className="px-3 py-1.5 bg-gradient-primary text-primary-foreground rounded-lg text-sm font-semibold">
                     {schedule.dayOfWeek}
                   </span>
                 </TableCell>
                 <TableCell>
-                  <div className="flex flex-col gap-1 text-sm">
-                    <span className="font-semibold text-foreground">{schedule.startTime}</span>
+                  <div className="flex flex-col text-sm">
+                    <span className="font-semibold">{schedule.startTime}</span>
                     <span className="text-muted-foreground">to {schedule.endTime}</span>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-gradient-primary rounded-full flex items-center justify-center text-primary-foreground text-xs font-bold">
-                      {schedule.faculty.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                    </div>
-                    <span className="font-medium">{schedule.faculty}</span>
-                  </div>
+                  <span className="font-medium">{schedule.faculty}</span>
+                </TableCell>
+                {/* Delete Button cell */}
+                <TableCell className="text-right">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onDelete(schedule.courseCode)}
+                    className="h-9 w-9 text-destructive hover:bg-destructive/10 hover:text-destructive transition-colors"
+                    title="Remove Course"
+                  >
+                    <Trash2 className="h-5 w-5" />
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}
