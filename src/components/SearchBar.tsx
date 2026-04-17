@@ -10,34 +10,32 @@ interface SearchBarProps {
 }
 
 export function SearchBar({ value, onChange, onSearch }: SearchBarProps) {
-  // This function handles the form submission
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // This stops the page from reloading on form submission
+    e.preventDefault();
     onSearch();
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      // Added relative and z-10 to ensure the form is above background elements and clickable
-      className="flex flex-col sm:flex-row gap-4 w-full relative z-10"
+      className="flex flex-col sm:flex-row gap-3 w-full"
     >
       <div className="relative flex-1">
-        <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-6 w-6 text-muted-foreground z-10" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/60 z-10 pointer-events-none" />
         <Input
           type="text"
-          placeholder="Enter course code (e.g., CSE265.15, ENG101.01)"
+          placeholder="Enter course code (e.g., CSE265.15)"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          // The onKeyPress event handler has been removed from here
-          className="pl-14 pr-6 h-16 text-lg bg-card/80 backdrop-blur-md border-2 border-border/50 focus:border-primary focus:bg-card transition-all duration-300 rounded-xl shadow-soft hover:shadow-glow"
+          className="pl-12 pr-5 h-14 text-base bg-card/80 dark:bg-card/60 backdrop-blur-md border-2 border-border/60 focus:border-primary focus:bg-card dark:focus:bg-card/80 transition-all duration-300 rounded-xl shadow-soft hover:shadow-glow placeholder:text-muted-foreground/50"
         />
       </div>
       <Button
-        type="submit" // The button type is changed to "submit"
+        type="submit"
         size="lg"
-        className="h-16 px-10 text-lg bg-gradient-primary hover:opacity-90 hover:scale-105 transition-all duration-300 shadow-glow rounded-xl font-semibold"
+        className="h-14 px-8 text-base bg-gradient-primary hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-glow rounded-xl font-semibold shrink-0"
       >
+        <Search className="h-4 w-4 mr-2" />
         Search
       </Button>
     </form>
