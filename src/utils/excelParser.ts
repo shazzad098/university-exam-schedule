@@ -105,12 +105,31 @@ function convertTo12Hour(time: string): string {
   return `${hour12}:${minuteStr} ${period}`;
 }
 
+function normalizeCode(code: string): string {
+  return code.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+}
+
+function getBaseCourseCode(courseCode: string): string {
+  const lastDotIndex = courseCode.lastIndexOf('.');
+  if (lastDotIndex === -1) {
+    return courseCode;
+  }
+  return courseCode.substring(0, lastDotIndex);
+}
+
 export function searchByCourseCode(schedules: ExamSchedule[], courseCode: string): ExamSchedule[] {
-  const searchTerm = courseCode.trim().toLowerCase();
+  const normalizedSearch = normalizeCode(courseCode);
   
-  const results = schedules.filter(schedule => 
-    schedule.courseCode.toLowerCase() === searchTerm 
-  );
+  if (!normalizedSearch) {
+    return [];
+  }
+  
+  const results = schedules.filter(schedule => {
+    const normalizedFull = normalizeCode(schedule.courseCode);
+    const normalizedBase = normalizeCode(getBaseCourseCode(schedule.courseCode));
+    
+    return normalizedSearch === normalizedBase || normalizedSearch === normalizedFull;
+  });
   
   // Sort by date
   return results.sort((a, b) => {

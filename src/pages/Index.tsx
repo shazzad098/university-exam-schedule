@@ -163,7 +163,7 @@ const Index = () => {
         {/* Hero Section */}
         <div className="text-center mb-12 animate-fade-in">
           <div className="inline-block mb-4 px-4 py-2 bg-primary/10 rounded-full border border-primary/20">
-            <span className="text-sm font-medium text-primary">📚 Academic Year 2024-25</span>
+            <span className="text-sm font-medium text-primary">📚 Academic Year 2025-26</span>
           </div>
           <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
             Find Your Exam Schedule
