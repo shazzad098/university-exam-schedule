@@ -212,7 +212,15 @@ const Index = () => {
       {/* Footer */}
       <footer className="relative z-10 border-t border-border/50 py-8 mt-auto">
         <p className="text-center text-sm text-muted-foreground">
-          © 2025 SEU Exam Routine Finder | Developed by Shazzad Haque Prince
+          © 2025 SEU Exam Routine Finder | Developed by{" "}
+          <a 
+            href="https://www.facebook.com/shazzad.hasan.22103361" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="font-medium hover:underline hover:text-primary transition-colors duration-200"
+          >
+            Shazzad Haque Prince
+          </a>
         </p>
       </footer>
     </div>
