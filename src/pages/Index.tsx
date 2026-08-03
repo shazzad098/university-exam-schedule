@@ -22,7 +22,7 @@ const Index = () => {
   const loadExcelData = async () => {
     try {
       setIsLoading(true);
-      const schedules = await parseExcelFile('/data/exam_routine.xlsx');
+      const schedules = await parseExcelFile('/data/exam_routine.xls');
       setAllSchedules(schedules);
     } catch (error) {
       console.error('Error loading data:', error);
