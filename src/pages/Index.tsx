@@ -5,7 +5,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { ExamSchedule, parseExcelFile, searchByCourseCode } from "@/utils/excelParser";
 import { generatePDF } from "@/utils/pdfGenerator";
-import { Download, GraduationCap } from "lucide-react";
+import { Download, GraduationCap, Search } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 const Index = () => {
@@ -39,7 +39,7 @@ const Index = () => {
   // সার্চ হ্যান্ডলার
   const handleSearch = () => {
     const trimmedSearchTerm = searchTerm.trim();
-    
+
     if (!trimmedSearchTerm) {
       toast({
         title: "Please enter a course code",
@@ -131,93 +131,114 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-primary/5 to-accent/5 relative overflow-hidden">
-      {/* Background Orbs & Pattern */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-primary/20 to-accent/20 rounded-full blur-3xl animate-float" />
-        <div className="absolute top-1/3 -left-40 w-96 h-96 bg-gradient-to-br from-accent/20 to-primary/20 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }} />
-        <div className="absolute bottom-20 right-1/4 w-64 h-64 bg-gradient-to-br from-primary/15 to-accent/15 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }} />
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] bg-[size:64px_64px] dark:bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)]" />
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-background">
+      {/* Campus background image with readability overlay */}
+      <div className="pointer-events-none fixed inset-0 z-0">
+        <img src="/seu.jpg" alt="SEU Campus" className="absolute inset-0 h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-b from-background/85 via-background/70 to-background/90" />
       </div>
 
       {/* Header */}
-      <header className="relative z-10 backdrop-blur-sm border-b border-border/50">
-        <div className="container mx-auto px-4 py-6 flex justify-between items-center">
-          <div className="flex items-center gap-4 animate-fade-in">
-            <div className="relative bg-white dark:bg-gray-800 p-2 rounded-xl shadow-lg">
-              <img src="/data/logo.png" alt="SEU Logo" className="h-12 w-12 object-contain" />
+      <header className="relative z-10 shrink-0 border-b border-white/10 bg-background/55 backdrop-blur-lg">
+        <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+          <a href="/" className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/90 p-1 shadow-lg ring-1 ring-border/40 dark:bg-gray-800">
+              <img src="/data/logo.png" alt="SEU Logo" className="h-full w-full object-contain" />
             </div>
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
-                SEU Exam Routine Finder
-              </h1>
-              <p className="text-xs text-muted-foreground">Southeast University</p>
+            <div className="leading-tight">
+              <p className="text-[11px] font-bold uppercase tracking-widest text-primary">
+                Southeast University
+              </p>
+              <h1 className="text-lg font-extrabold tracking-tight">Exam Routine Finder</h1>
             </div>
-          </div>
+          </a>
           <ThemeToggle />
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="relative z-10 container mx-auto px-4 py-16">
-        {/* Hero Section */}
-        <div className="text-center mb-12 animate-fade-in">
-          <div className="inline-block mb-4 px-4 py-2 bg-primary/10 rounded-full border border-primary/20">
-            <span className="text-sm font-medium text-primary">📚 Academic Year 2025-26</span>
-          </div>
-          <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+      {/* Main */}
+      <main className="relative z-10 mx-auto w-full max-w-5xl flex-1 px-4 py-10 sm:px-6">
+        {/* Hero */}
+        <section className="mb-8 text-center animate-fade-in">
+          <span className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-primary backdrop-blur">
+            <GraduationCap className="h-4 w-4" />
+            Academic Year 2025–26
+          </span>
+          <h2 className="mt-5 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-3xl font-black tracking-tight text-transparent sm:text-5xl">
             Find Your Exam Schedule
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
-            Search by course code to get instant access to your exam dates and times.
+          <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">
+            Enter any course code to instantly view your exam dates, times and faculty — all in one place.
+          </p>
+        </section>
+
+        {/* Search */}
+        <div className="mb-6">
+          <SearchBar value={searchTerm} onChange={setSearchTerm} onSearch={handleSearch} />
+          <p className="mt-3 text-center text-xs text-muted-foreground">
+            Try: <code className="rounded bg-card/70 px-1.5 py-0.5 font-mono text-primary">CSE1201.7</code>
+            <span className="mx-1">or</span>
+            <code className="rounded bg-card/70 px-1.5 py-0.5 font-mono text-primary">CSE161.1</code>
           </p>
         </div>
 
-        {/* Search Bar */}
-        <div className="max-w-3xl mx-auto mb-16">
-          <SearchBar value={searchTerm} onChange={setSearchTerm} onSearch={handleSearch} />
-        </div>
+        {/* Loading */}
+        {isLoading && (
+          <div className="flex justify-center py-16">
+            <div className="flex items-center gap-3">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-r-transparent" />
+              <p className="text-sm text-muted-foreground">Loading schedules...</p>
+            </div>
+          </div>
+        )}
 
         {/* Results */}
-        {results.length > 0 && (
-          <div className="space-y-6 animate-slide-up">
-            <div className="flex justify-between items-center flex-wrap gap-4 bg-card/50 backdrop-blur-sm p-6 rounded-2xl border border-border/50">
+        {!isLoading && results.length > 0 && (
+          <div className="animate-slide-up space-y-4">
+            <div className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-card/70 p-4 backdrop-blur-md sm:flex-row sm:items-center sm:justify-between sm:p-5">
               <div>
-                <h3 className="text-xl font-bold">Your Exam Schedule</h3>
-                <p className="text-sm text-muted-foreground">Total {results.length} course(s) selected</p>
+                <h3 className="text-lg font-bold">Your Exam Schedule</h3>
+                <p className="text-sm text-muted-foreground">
+                  {results.length} course{results.length !== 1 ? "s" : ""} selected
+                </p>
               </div>
-              <div className="flex gap-3">
-                <Button onClick={handleClearResults} variant="outline" className="hover:text-destructive">
+              <div className="flex shrink-0 gap-3">
+                <Button
+                  onClick={handleClearResults}
+                  variant="outline"
+                  className="hover:border-destructive/40 hover:text-destructive"
+                >
                   Clear All
                 </Button>
-                <Button onClick={handleDownloadPDF} className="bg-gradient-primary">
-                  <Download className="h-4 w-4 mr-2" /> Download PDF
+                <Button onClick={handleDownloadPDF} className="bg-gradient-primary shadow-glow hover:opacity-90">
+                  <Download className="mr-2 h-4 w-4" /> Download PDF
                 </Button>
               </div>
             </div>
-            {/* onDelete প্রপসটি পাস করা হয়েছে */}
             <ResultsTable results={results} onDelete={handleDeleteCourse} />
           </div>
         )}
 
-        {/* Loading & Empty States */}
-        {isLoading && (
-          <div className="text-center py-12">
-            <div className="inline-block h-10 w-10 animate-spin rounded-full border-4 border-primary border-r-transparent" />
-            <p className="mt-4 text-muted-foreground">Loading schedules...</p>
+        {/* Empty state */}
+        {!isLoading && results.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+            <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-card/60 backdrop-blur">
+              <Search className="h-7 w-7 opacity-40" />
+            </div>
+            <p className="text-sm">Search a course code above to see exam schedules.</p>
           </div>
         )}
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-border/50 py-8 mt-auto">
-        <p className="text-center text-sm text-muted-foreground">
-          © 2025 SEU Exam Routine Finder | Developed by{" "}
-          <a 
-            href="https://www.facebook.com/shazzad.hasan.22103361" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="font-medium hover:underline hover:text-primary transition-colors duration-200"
+      <footer className="relative z-10 shrink-0 border-t border-white/10 bg-background/55 py-5 backdrop-blur-lg">
+        <p className="text-center text-xs text-muted-foreground sm:text-sm">
+          © 2025 SEU Exam Routine Finder &nbsp;·&nbsp; Developed by{" "}
+          <a
+            href="https://www.facebook.com/shazzad.hasan.22103361"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-primary/90 underline-offset-2 hover:underline"
           >
             Shazzad Haque Prince
           </a>
