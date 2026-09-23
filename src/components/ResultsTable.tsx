@@ -6,9 +6,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, User, BookOpen, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 
 interface ExamSchedule {
   courseCode: string;
@@ -28,7 +28,6 @@ interface ResultsTableProps {
 export function ResultsTable({ results, onDelete }: ResultsTableProps) {
   if (results.length === 0) return null;
 
-  // তারিখ অনুযায়ী ছোট থেকে বড় ক্রমে সাজানো
   const sortedResults = [...results].sort((a, b) => {
     const parseDateStringForSorting = (dateStr: string) => {
       const parts = dateStr.split('.');
@@ -44,83 +43,89 @@ export function ResultsTable({ results, onDelete }: ResultsTableProps) {
   });
 
   return (
-    <Card className="overflow-hidden rounded-2xl border border-white/10 bg-card/70 shadow-soft backdrop-blur-md transition-shadow duration-300 hover:shadow-glow animate-slide-up">
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow className="border-b-2 border-primary/20 bg-gradient-to-r from-primary/10 to-accent/10 hover:bg-transparent">
-              <TableHead className="h-12 whitespace-nowrap text-xs font-bold uppercase tracking-wider text-primary">
-                <div className="flex items-center gap-1.5">
-                  <BookOpen className="h-4 w-4" />
-                  Course Code
-                </div>
-              </TableHead>
-              <TableHead className="text-xs font-bold uppercase tracking-wider text-primary">Course Title</TableHead>
-              <TableHead className="whitespace-nowrap text-xs font-bold uppercase tracking-wider text-primary">
-                <div className="flex items-center gap-1.5">
-                  <Calendar className="h-4 w-4" />
+    <Card className="overflow-hidden border-border bg-card/95 shadow-soft backdrop-blur">
+      <CardHeader className="border-b border-border bg-muted/50 px-5 py-3.5">
+        <div className="flex items-center justify-between">
+          <p className="text-[13px] font-semibold uppercase tracking-wider text-muted-foreground">
+            Examination Schedule
+          </p>
+          <p className="text-[13px] font-medium text-muted-foreground">
+            {sortedResults.length} {sortedResults.length === 1 ? "entry" : "entries"}
+          </p>
+        </div>
+      </CardHeader>
+      <CardContent className="p-0">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-b border-border bg-transparent hover:bg-transparent">
+                <TableHead className="h-11 whitespace-nowrap px-5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  Course
+                </TableHead>
+                <TableHead className="h-11 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  Title
+                </TableHead>
+                <TableHead className="h-11 whitespace-nowrap text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                   Date
-                </div>
-              </TableHead>
-              <TableHead className="text-xs font-bold uppercase tracking-wider text-primary">Day</TableHead>
-              <TableHead className="whitespace-nowrap text-xs font-bold uppercase tracking-wider text-primary">
-                <div className="flex items-center gap-1.5">
-                  <Clock className="h-4 w-4" />
+                </TableHead>
+                <TableHead className="h-11 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  Day
+                </TableHead>
+                <TableHead className="h-11 whitespace-nowrap text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                   Time
-                </div>
-              </TableHead>
-              <TableHead className="text-xs font-bold uppercase tracking-wider text-primary">
-                <div className="flex items-center gap-1.5">
-                  <User className="h-4 w-4" />
+                </TableHead>
+                <TableHead className="h-11 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                   Faculty
-                </div>
-              </TableHead>
-              <TableHead className="text-right text-xs font-bold uppercase tracking-wider text-primary">Action</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {sortedResults.map((schedule, index) => (
-              <TableRow
-                key={index}
-                className="border-b border-border/30 transition-colors duration-150 hover:bg-primary/5 last:border-0 dark:hover:bg-primary/10"
-              >
-                <TableCell className="font-bold">
-                  <span className="rounded-lg border border-accent/25 bg-accent/10 px-2.5 py-1 font-mono text-xs text-accent">
-                    {schedule.courseCode}
-                  </span>
-                </TableCell>
-                <TableCell className="max-w-[200px] text-sm font-medium">
-                  <span title={schedule.courseTitle}>{schedule.courseTitle}</span>
-                </TableCell>
-                <TableCell className="whitespace-nowrap text-sm font-medium">{schedule.date}</TableCell>
-                <TableCell>
-                  <span className="whitespace-nowrap rounded-lg bg-gradient-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground">
-                    {schedule.dayOfWeek}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  <div className="whitespace-nowrap text-sm">
-                    <span className="font-semibold">{schedule.startTime}</span>
-                    <span className="text-xs text-muted-foreground"> to {schedule.endTime}</span>
-                  </div>
-                </TableCell>
-                <TableCell className="text-sm font-medium">{schedule.faculty}</TableCell>
-                <TableCell className="text-right">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => onDelete(schedule.courseCode)}
-                    className="h-8 w-8 rounded-lg text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
-                    title="Remove Course"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </TableCell>
+                </TableHead>
+                <TableHead className="h-11 pr-5 text-right text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  <span className="sr-only">Action</span>
+                </TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+            </TableHeader>
+            <TableBody>
+              {sortedResults.map((schedule, index) => (
+                <TableRow
+                  key={`${schedule.courseCode}-${index}`}
+                  className="border-b border-border/60 transition-colors last:border-0 hover:bg-muted/40"
+                >
+                  <TableCell className="px-5 py-3.5">
+                    <span className="whitespace-nowrap font-mono text-[13px] font-semibold text-primary">
+                      {schedule.courseCode}
+                    </span>
+                  </TableCell>
+                  <TableCell className="max-w-[220px] py-3.5 text-sm text-foreground">
+                    <span title={schedule.courseTitle}>{schedule.courseTitle}</span>
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap py-3.5 text-sm tabular-nums text-foreground">
+                    {schedule.date}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap py-3.5 text-sm text-muted-foreground">
+                    {schedule.dayOfWeek}
+                  </TableCell>
+                  <TableCell className="whitespace-nowrap py-3.5 text-sm tabular-nums text-foreground">
+                    {schedule.startTime}
+                    <span className="text-muted-foreground"> – {schedule.endTime}</span>
+                  </TableCell>
+                  <TableCell className="max-w-[180px] truncate py-3.5 text-sm text-muted-foreground">
+                    <span title={schedule.faculty}>{schedule.faculty}</span>
+                  </TableCell>
+                  <TableCell className="py-3.5 pr-5 text-right">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => onDelete(schedule.courseCode)}
+                      className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                      title="Remove course"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </CardContent>
     </Card>
   );
 }

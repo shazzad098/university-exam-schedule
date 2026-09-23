@@ -16,21 +16,23 @@ export function SearchBar({ value, onChange, onSearch }: SearchBarProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="relative z-10 flex w-full flex-col gap-3 sm:flex-row">
+    <form
+      onSubmit={handleSubmit}
+      className="flex w-full flex-col gap-2 rounded-xl border border-border bg-card/95 p-2 shadow-soft backdrop-blur sm:flex-row sm:items-center"
+    >
       <div className="relative flex-1">
-        <Search className="pointer-events-none absolute left-4 top-1/2 z-10 h-5 w-5 -translate-y-1/2 text-muted-foreground/70" />
+        <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           type="text"
-          placeholder="Enter course code (e.g., CSE1201.7)"
+          placeholder="Enter course code — e.g. CSE1201.7"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="h-14 rounded-xl border-2 border-border/50 bg-card/80 pl-12 pr-5 text-base shadow-soft backdrop-blur-md transition-all duration-300 hover:shadow-glow focus:border-primary focus:bg-card"
+          className="h-11 border-0 bg-transparent pl-10 text-[15px] shadow-none focus-visible:ring-1 focus-visible:ring-primary/30"
         />
       </div>
       <Button
         type="submit"
-        size="lg"
-        className="h-14 shrink-0 rounded-xl bg-gradient-primary px-8 text-base font-semibold shadow-glow transition-all duration-200 hover:scale-[1.02] hover:opacity-90 active:scale-[0.98]"
+        className="h-11 shrink-0 rounded-lg bg-primary px-6 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
       >
         <Search className="mr-2 h-4 w-4" />
         Search
